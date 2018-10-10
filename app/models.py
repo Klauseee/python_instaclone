@@ -42,7 +42,7 @@ class User(UserMixin, db.Model):
 
     def followed_posts(self):
         # query the posts table for all posts from a user that is followed by anyone
-        followed =  Post.query.join(followers, (followers.c.followed_i == Post.user_id)
+        followed =  Post.query.join(followers, (followers.c.followed_id == Post.user_id)
             # from this combined temporary table filter for those posts that belong to users the current user follows
             ).filter(followers.c.follower_id == self.id)
 
@@ -50,7 +50,7 @@ class User(UserMixin, db.Model):
         own = Post.query.filter_by(user_id=self.id)
 
         # use union to combine users own posts and the posts of those their following, sort by date
-        return followed.union(own).order_by(Post.timestamps.desc())
+        return followed.union(own).order_by(Post.timestamp.desc())
 
 
 @login.user_loader
@@ -67,4 +67,4 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return '<Post {}>'.format(self.body)
+        return '<Post {}>'.format(self.caption)
